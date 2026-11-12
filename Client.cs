@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -45,7 +45,6 @@ namespace DnD_Trading
 
         private void Client_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Client' table. You can move, or remove it, as needed.
             this.clientTableAdapter.Fill(this.wstGrp22DataSet.Client);
         }
 
@@ -59,56 +58,64 @@ namespace DnD_Trading
 
         private void button1_Click(object sender, EventArgs e)
         {
-            int clientID = dataGridView1.CurrentRow.Cells[0].Value != null ? Convert.ToInt32(dataGridView1.CurrentRow.Cells[0].Value) : 0;
-
-            if (clientID == 0)
+            DataRowView record = dataGridView1.CurrentRow?.DataBoundItem as DataRowView;
+            if (record == null || dataGridView1.CurrentRow.IsNewRow)
             {
-                MessageBox.Show("Please select a client to update.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a client to update.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
+            int clientID = Convert.ToInt32(record["ClientID"]);
 
-            if (string.IsNullOrWhiteSpace(textBox1.Text.Trim()) && string.IsNullOrWhiteSpace(textBox2.Text.Trim()) && string.IsNullOrWhiteSpace(textBox3.Text.Trim()))
+            if (string.IsNullOrWhiteSpace(textBox1.Text.Trim()) && string.IsNullOrWhiteSpace(textBox2.Text.Trim()) &&
+                string.IsNullOrWhiteSpace(textBox3.Text.Trim()))
             {
-                MessageBox.Show("Please enter at least one field to search.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter at least one field to update.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
             if (!string.IsNullOrWhiteSpace(textBox1.Text))
             {
-                if (MessageBox.Show("Are you sure you want to update client name?", "Client Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Are you sure you want to update client name?", "Client Information",
+                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    clientTableAdapter.UpdateName(
-                        textBox1.Text.Trim(), // ClientName
-                        clientID // ClientID
+                    clientTableAdapter.UpdateName(textBox1.Text.Trim(), // ClientName
+                                                  clientID              // ClientID
                     );
-                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                 }
-                else 
+                else
                 {
-                    MessageBox.Show("Client name update cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Client name update cancelled.", "Cancelled", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                     return;
                 }
             }
-            
+
             if (!string.IsNullOrWhiteSpace(textBox2.Text))
             {
                 if (!IsValidPhoneNumber(textBox2.Text.Trim()))
                 {
-                    MessageBox.Show("Phone number must be 10 digits and contain only numbers.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Phone number must be 10 digits and contain only numbers.", "Input Error",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
-                if (MessageBox.Show("Are you sure you want to update client phone number?", "Client Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Are you sure you want to update client phone number?", "Client Information",
+                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    clientTableAdapter.UpdatePhoneNumber(
-                        textBox2.Text.Trim(), // ClientName
-                        clientID // ClientID
+                    clientTableAdapter.UpdatePhoneNumber(textBox2.Text.Trim(), // ClientName
+                                                         clientID              // ClientID
                     );
-                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show("Client phone number update cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Client phone number update cancelled.", "Cancelled", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                     return;
                 }
             }
@@ -117,21 +124,24 @@ namespace DnD_Trading
             {
                 if (!IsValidEmail(textBox3.Text.Trim()))
                 {
-                    MessageBox.Show("Invalid email address format.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Invalid email address format.", "Input Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
                     return;
                 }
 
-                if (MessageBox.Show("Are you sure you want to update client email?", "Client Information", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                if (MessageBox.Show("Are you sure you want to update client email?", "Client Information",
+                                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    clientTableAdapter.UpdateEmail(
-                        textBox3.Text.Trim(), // ClientName
-                        clientID // ClientID
+                    clientTableAdapter.UpdateEmail(textBox3.Text.Trim(), // ClientName
+                                                   clientID              // ClientID
                     );
-                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Client updated successfully!", "Success", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                 }
                 else
                 {
-                    MessageBox.Show("Client email update cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Client email update cancelled.", "Cancelled", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                     return;
                 }
             }
@@ -158,14 +168,17 @@ namespace DnD_Trading
 
             return true;
         }
+
         bool IsValidEmail(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
             try
             {
                 var addr = new MailAddress(email);
                 return addr.Address == email;
             }
-            catch
+            catch (FormatException)
             {
                 return false;
             }
@@ -184,7 +197,8 @@ namespace DnD_Trading
 
                 clientTableAdapter.UpdateStatus(isOptOut, clientID);
 
-                MessageBox.Show("Client opt-out status updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Client opt-out status updated successfully!", "Success", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
             }
         }
 
