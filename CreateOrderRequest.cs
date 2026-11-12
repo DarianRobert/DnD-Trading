@@ -1,4 +1,4 @@
-﻿using DnD_Trading.WstGrp22DataSetTableAdapters;
+using DnD_Trading.WstGrp22DataSetTableAdapters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -14,30 +14,26 @@ namespace DnD_Trading
     public partial class CreateOrderRequest : Form
     {
         private Parent mainForm;
+
         public CreateOrderRequest(Parent p)
         {
             InitializeComponent();
-            mainForm=p;
+            mainForm = p;
         }
 
         private void CreateOrderRequest_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Product' table. You can move, or remove it, as needed.
             this.productTableAdapter.Fill(this.wstGrp22DataSet.Product);
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Payment' table. You can move, or remove it, as needed.
             this.paymentTableAdapter.FillByDESC(this.wstGrp22DataSet.Payment);
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Order' table. You can move, or remove it, as needed.
             this.orderTableAdapter.Fill(this.wstGrp22DataSet.Order);
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Client' table. You can move, or remove it, as needed.
             this.clientTableAdapter.FillByOptOutFalse(this.wstGrp22DataSet.Client);
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.ClientOrderProduct' table. You can move, or remove it, as needed.
-            //this.clientOrderProductTableAdapter.Fill(this.wstGrp22DataSet.ClientOrderProduct);
-
+            // this.clientOrderProductTableAdapter.Fill(this.wstGrp22DataSet.ClientOrderProduct);
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            DialogResult result = MessageBox.Show("Add new product to order?", "New Product", MessageBoxButtons.OKCancel);
+            DialogResult result =
+                MessageBox.Show("Add new product to order?", "New Product", MessageBoxButtons.OKCancel);
 
             if (result == DialogResult.OK)
             {
@@ -46,7 +42,8 @@ namespace DnD_Trading
                 // Validate Product Description
                 if (string.IsNullOrWhiteSpace(desc))
                 {
-                    MessageBox.Show("Product description is required.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Product description is required.", "Input Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
                     txtProdDesc.Focus();
                     return;
                 }
@@ -54,8 +51,9 @@ namespace DnD_Trading
                 // Validate Product Description Format
                 if (!System.Text.RegularExpressions.Regex.IsMatch(desc, @"^(?=.*[A-Za-z])[A-Za-z0-9\s\-,.()'/&]+$"))
                 {
-                    MessageBox.Show("Product description must contain valid characters (letters, numbers, spaces, and basic punctuation).",
-                                    "Invalid Format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(
+                        "Product description must contain valid characters (letters, numbers, spaces, and basic punctuation).",
+                        "Invalid Format", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     txtProdDesc.Focus();
                     return;
                 }
@@ -63,8 +61,8 @@ namespace DnD_Trading
                 // Validate Product Description Length
                 if (desc.Length < 3 || desc.Length > 70)
                 {
-                    MessageBox.Show("Product description should be between 3 and 70 characters.",
-                                    "Invalid Length", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Product description should be between 3 and 70 characters.", "Invalid Length",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     txtProdDesc.Focus();
                     return;
                 }
@@ -73,8 +71,9 @@ namespace DnD_Trading
                 // Check for 4+ repeated identical letters
                 if (System.Text.RegularExpressions.Regex.IsMatch(desc, @"(.)\1{3,}"))
                 {
-                    MessageBox.Show("Product description appears invalid (repeated characters). Please enter a proper description.",
-                                    "Invalid Description", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(
+                        "Product description appears invalid (repeated characters). Please enter a proper description.",
+                        "Invalid Description", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     txtProdDesc.Focus();
                     return;
                 }
@@ -96,7 +95,8 @@ namespace DnD_Trading
                 // Validate Product Quantity
                 if (!int.TryParse(numericUpDown1.Text.Trim(), out int quantity) || quantity <= 0)
                 {
-                    MessageBox.Show("Product quantity must be a positive integer.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Product quantity must be a positive integer.", "Input Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
                     numericUpDown1.Focus();
                     return;
                 }
@@ -106,16 +106,16 @@ namespace DnD_Trading
                 bool hasMatch = false;
 
                 // Split the user's description into individual lowercase words
-                var userWords = desc
-                    .ToLower()
-                    .Split(new[] { ' ', '-', ',', '.', '(', ')', '/', '&' }, StringSplitOptions.RemoveEmptyEntries);
+                var userWords = desc.ToLower().Split(new[] { ' ', '-', ',', '.', '(', ')', '/', '&' },
+                                                     StringSplitOptions.RemoveEmptyEntries);
 
                 // Loop through all products in the database
                 foreach (var row in knownProducts)
                 {
                     string productName = row.ProductName.ToString().ToLower();
                     // Split each product into words
-                    var productWords = productName.Split(new[] { ' ', '-', ',', '.', '(', ')', '/', '&' }, StringSplitOptions.RemoveEmptyEntries);
+                    var productWords = productName.Split(new[] { ' ', '-', ',', '.', '(', ')', '/', '&' },
+                                                         StringSplitOptions.RemoveEmptyEntries);
 
                     // Check for overlap
                     if (userWords.Any(w => productWords.Contains(w)))
@@ -130,9 +130,7 @@ namespace DnD_Trading
                 {
                     DialogResult confirm = MessageBox.Show(
                         "No similar products were found in the database.\nAre you sure you want to add this product description?",
-                        "Unrecognized Product",
-                        MessageBoxButtons.YesNo,
-                        MessageBoxIcon.Question);
+                        "Unrecognized Product", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
                     if (confirm == DialogResult.No)
                     {
@@ -142,28 +140,24 @@ namespace DnD_Trading
                 }
 
                 // Insert the product into the order
-                clientOrderProductTableAdapter.Insert(
-                    globalvar.orderID,
-                    globalvar.clientID,
-                    desc,
-                    quantity,
-                    false
-                );
+                clientOrderProductTableAdapter.Insert(globalvar.orderID, globalvar.clientID, desc, quantity, false);
 
-                MessageBox.Show("Product added to order successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Product added to order successfully!", "Success", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
 
                 // Clear input fields after adding
                 txtProdDesc.Clear();
                 numericUpDown1.Value = 0;
 
                 // Refresh data
-                clientOrderProductTableAdapter.FillByOrderID(this.wstGrp22DataSet.ClientOrderProduct, globalvar.orderID);
+                clientOrderProductTableAdapter.FillByOrderID(this.wstGrp22DataSet.ClientOrderProduct,
+                                                             globalvar.orderID);
             }
             else
             {
-                MessageBox.Show("Product addition cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Product addition cancelled.", "Cancelled", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
             }
-
         }
 
         private void dataGridView2_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
@@ -175,14 +169,15 @@ namespace DnD_Trading
 
         private void button2_Click(object sender, EventArgs e)
         {
-            
+
             if (globalvar.clientID == 0)
             {
-                MessageBox.Show("Please select a client before creating an order.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a client before creating an order.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
-            //globalvar.orderID = Convert.ToInt32(dataGridView3.Rows[0].Cells[0].Value) + 1;
+            // globalvar.orderID = Convert.ToInt32(dataGridView3.Rows[0].Cells[0].Value) + 1;
 
             int paymentID;
 
@@ -198,55 +193,50 @@ namespace DnD_Trading
             DialogResult result = MessageBox.Show("Create new order record?", "New Order", MessageBoxButtons.OKCancel);
             if (result == DialogResult.OK)
             {
-                orderTableAdapter.Insert(
-                    globalvar.clientID, // ClientID
-                    globalvar.userName, // UserName
-                    DateTime.Now, // OrderDate
-                    0, // OrderTotal
-                    false // OrderStatus
+                orderTableAdapter.Insert(globalvar.clientID, // ClientID
+                                         globalvar.userName, // UserName
+                                         DateTime.Now,       // OrderDate
+                                         0,                  // OrderTotal
+                                         false               // OrderStatus
                 );
 
-                MessageBox.Show("Order created successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Order created successfully!", "Success", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
 
                 orderTableAdapter.FillByDESC(this.wstGrp22DataSet.Order);
 
-                globalvar.orderID = dataGridView3.Rows[0].Cells[0].Value != null ? Convert.ToInt32(dataGridView3.Rows[0].Cells[0].Value) : 0;
+                globalvar.orderID = dataGridView3.Rows[0].Cells[0].Value != null
+                                        ? Convert.ToInt32(dataGridView3.Rows[0].Cells[0].Value)
+                                        : 0;
                 groupBox1.Visible = true;
                 groupBox2.Visible = false;
-                paymentTableAdapter.Insert(
-                    globalvar.orderID, 
-                    false,
-                    0,
-                    0,
-                    0
-                );
+                paymentTableAdapter.Insert(globalvar.orderID, false, 0, 0, 0);
 
                 this.paymentTableAdapter.FillByDESC(this.wstGrp22DataSet.Payment);
-                globalvar.paymentID = dataGridView4.Rows[0].Cells[0].Value != null ? Convert.ToInt32(dataGridView4.Rows[0].Cells[0].Value) : 0;
+                globalvar.paymentID = dataGridView4.Rows[0].Cells[0].Value != null
+                                          ? Convert.ToInt32(dataGridView4.Rows[0].Cells[0].Value)
+                                          : 0;
                 globalvar.orderMessage = "Order ID: " + globalvar.orderID + "<br/>";
 
                 globalvar.orderMessage +=
                     "<table border='1' cellspacing='0' cellpadding='6' style='border-collapse:collapse;font-family:Arial;font-size:12px;'>" +
-                    "<tr>" +
-                        "<th>Product</th>" +
-                        "<th>Quantity</th>" +
-                        "<th>Price</th>" +
-                    "</tr>";
+                    "<tr>" + "<th>Product</th>" + "<th>Quantity</th>" + "<th>Price</th>" + "</tr>";
             }
             else
             {
-                MessageBox.Show("Order creation cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Order creation cancelled.", "Cancelled", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
             }
 
-            //textBox1.Clear();
-
+            // textBox1.Clear();
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
             if (dataGridView1.Rows.Count == 1)
             {
-                MessageBox.Show("Please add at least one product to the order before finalizing.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please add at least one product to the order before finalizing.", "Input Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -286,17 +276,12 @@ namespace DnD_Trading
 
         private void CreateOrderRequest_FormClosed(object sender, FormClosedEventArgs e)
         {
-            
         }
 
         private void CreateOrderRequest_FormClosing(object sender, FormClosingEventArgs e)
         {
-            var result = MessageBox.Show(
-                "Are you sure you want to exit? Any order in progress will be cancelled.",
-                "Warning",
-                MessageBoxButtons.YesNo,
-                MessageBoxIcon.Warning
-            );
+            var result = MessageBox.Show("Are you sure you want to exit? Any order in progress will be cancelled.",
+                                         "Warning", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
             if (result == DialogResult.Yes)
             {
@@ -312,26 +297,28 @@ namespace DnD_Trading
 
         private void button5_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to cancel the order request?", "Cancel Order Request", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Are you sure you want to cancel the order request?", "Cancel Order Request",
+                                MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 if (dataGridView1.Rows.Count == 1)
                 {
-                    //MessageBox.Show("No products in the order to cancel.", "No Products", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    //return;
+                    // MessageBox.Show("No products in the order to cancel.", "No Products", MessageBoxButtons.OK,
+                    // MessageBoxIcon.Information); return;
                 }
                 orderTableAdapter.DeleteQuery(globalvar.orderID);
                 clientOrderProductTableAdapter.DeleteQuery(globalvar.orderID);
                 paymentTableAdapter.DeleteQuery(globalvar.orderID);
 
                 dataGridView1.DataSource = null; // Clear the DataGridView
-                //dataGridView1.DataSource = wstGrp22DataSet.ClientOrderProduct; // Rebind to the updated dataset
+                // dataGridView1.DataSource = wstGrp22DataSet.ClientOrderProduct; // Rebind to the updated dataset
                 dataGridView1.Rows.Clear(); // Clear all rows
                 dataGridView1.Refresh();
                 globalvar.priceTotal = 0; // Reset the total price
-                MessageBox.Show("Order cancelled successfully.", "Order Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                globalvar.orderID = 0; // Reset the order ID
-                globalvar.clientID = 0; // Reset the client ID
-                globalvar.clientName = string.Empty; // Reset the client name
+                MessageBox.Show("Order cancelled successfully.", "Order Cancelled", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                globalvar.orderID = 0;                // Reset the order ID
+                globalvar.clientID = 0;               // Reset the client ID
+                globalvar.clientName = string.Empty;  // Reset the client name
                 globalvar.clientEmail = string.Empty; // Reset the client email
 
                 txtProdDesc.Clear();

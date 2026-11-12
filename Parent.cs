@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -13,10 +13,11 @@ using System.Net.Sockets;
 
 namespace DnD_Trading
 {
-    public partial class Parent: Form
+    public partial class Parent : Form
     {
         public Panel Panel1;
         public MenuStrip MenuStrip1;
+
         public Parent()
         {
             InitializeComponent();
@@ -38,95 +39,66 @@ namespace DnD_Trading
 
         private void orderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
         }
 
         private void inventoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Product product = new Product(this);
-            FormSetup(product); // Set up the form as an MDI child
-            product.MdiParent = this; //display the child window 
-            product.WindowState = FormWindowState.Maximized; //maximize the child window
-            product.Show();
-            panel1.Visible = false; // Hide the login panel when navigating to the inventory form
+            ShowChildForm(new Product(this));
         }
 
         private void reportsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Reports reports = new Reports(this);
-            FormSetup(reports); // Set up the form as an MDI child
-            reports.MdiParent = this; //display the child window
-            reports.WindowState = FormWindowState.Maximized; //maximize the child window
-            reports.Show();
-            panel1.Visible = false;
+            ShowChildForm(new Reports(this));
         }
 
         private void clientsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            
         }
 
         private void addClientToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddClient addClient = new AddClient(this);
-            FormSetup(addClient); // Set up the form as an MDI child
-            addClient.MdiParent = this; //display the child window
-            addClient.WindowState = FormWindowState.Maximized; //maximize the child window
-            addClient.Show();
-            panel1.Visible = false;
+            ShowChildForm(new AddClient(this));
         }
 
         private void searchForClientToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Client client = new Client(this);
-            FormSetup(client); // Set up the form as an MDI child
-            client.MdiParent = this; //display the child window
-            client.WindowState = FormWindowState.Maximized; //maximize the child window
-            client.Show();
-            panel1.Visible = false;
+            ShowChildForm(new Client(this));
         }
 
         private void searchForOrderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Order order = new Order(this);
-            FormSetup(order); // Set up the form as an MDI child
-            order.MdiParent = this; //display the child window
-            order.WindowState = FormWindowState.Maximized; //maximize the child window
-            order.Show();
-            panel1.Visible = false;
+            ShowChildForm(new Order(this));
         }
 
         private void createOrderToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CreateOrder createOrder = new CreateOrder(this);
-            FormSetup(createOrder); // Set up the form as an MDI child
-            createOrder.MdiParent = this; //display the child window
-            createOrder.WindowState = FormWindowState.Maximized; //maximize the child window
-            createOrder.Show();
-            panel1.Visible = false;
+            ShowChildForm(new CreateOrder(this));
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
             try
             {
-                userTableAdapter.FillByUsernameAndPassword(wstGrp22DataSet.User, txtUsername.Text.Trim(), txtPassword.Text.Trim());
+                userTableAdapter.FillByUsernameAndPassword(wstGrp22DataSet.User, txtUsername.Text.Trim(),
+                                                           txtPassword.Text.Trim());
 
                 if (wstGrp22DataSet.User.Rows.Count > 0)
                 {
 
                     if (Convert.ToInt32(wstGrp22DataSet.User.Rows[0]["UserOptOut"]) == 1)
                     {
-                        MessageBox.Show("This user has opted out of the system. Please contact support.", "User Opted Out", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        MessageBox.Show("This user has opted out of the system. Please contact support.",
+                                        "User Opted Out", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         return; // Exit the login process if the user has opted out
                     }
 
                     menuStrip1.Visible = true;
                     menuStrip1.Items[0].Visible = false;
 
-                    globalvar.loggedInAs = Convert.ToInt32(wstGrp22DataSet.User.Rows[0]["UserType"]); // 0 = Sales Rep, 1 = Manager
+                    globalvar.loggedInAs =
+                        Convert.ToInt32(wstGrp22DataSet.User.Rows[0]["UserType"]); // 0 = Sales Rep, 1 = Manager
 
-                    // Access the specific row and column instead of using ItemArray  
+                    // Access the specific row and column instead of using ItemArray
                     DataRow userRow = wstGrp22DataSet.User.Rows[0];
                     if (userRow["UserType"].ToString() == "False")
                     {
@@ -138,14 +110,14 @@ namespace DnD_Trading
                         menuStrip1.Items[6].Visible = true;
                         menuStrip1.Items[7].Visible = true;
                     }
-                    
-                    // User exists, proceed to the main application  
+
+                    // User exists, proceed to the main application
                     MessageBox.Show("Login successful!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     globalvar.userName = txtUsername.Text.Trim();
                     globalvar.userFirstName = userRow["UserFirstName"].ToString();
                     globalvar.userSurname = userRow["UserLastName"].ToString();
                     txtUsername.Clear();
-                    txtPassword.Clear();   
+                    txtPassword.Clear();
                     txtUsername.Visible = false;
                     txtPassword.Visible = false;
                     btnLogin.Visible = false;
@@ -165,13 +137,15 @@ namespace DnD_Trading
                 }
                 else
                 {
-                    // User does not exist, show error message  
-                    MessageBox.Show("Invalid username or password.", "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    // User does not exist, show error message
+                    MessageBox.Show("Invalid username or password.", "Login Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred during login: " + ex.Message, "Login Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("An error occurred during login: " + ex.Message, "Login Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
         }
 
@@ -195,31 +169,32 @@ namespace DnD_Trading
 
         private void btnChangePassword_Click(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(txtReEnterPassword.Text) || string.IsNullOrWhiteSpace(txtPassword.Text) || string.IsNullOrWhiteSpace(txtUsername.Text))
+            if (string.IsNullOrWhiteSpace(txtReEnterPassword.Text) || string.IsNullOrWhiteSpace(txtPassword.Text) ||
+                string.IsNullOrWhiteSpace(txtUsername.Text))
             {
-                MessageBox.Show("Please enter both username and new password.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter both username and new password.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
             if (txtReEnterPassword.Text.Trim() != txtPassword.Text.Trim())
             {
-                MessageBox.Show("Passwords do not match. Please try again.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Passwords do not match. Please try again.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
             try
-            { 
+            {
                 // Attempt to update and get number of affected rows
-                int affectedRows = userTableAdapter.UpdateQuery1(
-                    txtReEnterPassword.Text.Trim(),
-                    txtUsername.Text.Trim(),
-                    textBox1.Text.Trim(),
-                    txtUsername.Text.Trim()
-                );
+                int affectedRows =
+                    userTableAdapter.UpdateQuery1(txtReEnterPassword.Text.Trim(), txtUsername.Text.Trim(),
+                                                  textBox1.Text.Trim(), txtUsername.Text.Trim());
 
                 if (affectedRows > 0)
                 {
-                    MessageBox.Show("Password changed successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Password changed successfully!", "Success", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                     txtUsername.Clear();
                     txtPassword.Clear();
                     txtReEnterPassword.Clear();
@@ -239,20 +214,19 @@ namespace DnD_Trading
                 }
                 else
                 {
-                    MessageBox.Show("Incorrect username/verification question answer. Password not changed.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Incorrect username/verification question answer. Password not changed.", "Warning",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 }
-
             }
             catch (Exception ex)
             {
-                MessageBox.Show("An error occurred while changing the password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("An error occurred while changing the password.", "Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Error);
             }
-
         }
 
         private void Parent_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.User' table. You can move, or remove it, as needed.
             this.userTableAdapter.Fill(this.wstGrp22DataSet.User);
             this.WindowState = FormWindowState.Maximized; // Set the form to maximized state
         }
@@ -279,7 +253,6 @@ namespace DnD_Trading
 
         private void pbReEnterPassword_Click(object sender, EventArgs e)
         {
-
         }
 
         private void pbReEnterPassword_MouseDown(object sender, MouseEventArgs e)
@@ -296,42 +269,31 @@ namespace DnD_Trading
 
         private void supplierToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Supplier supplier = new Supplier(this);
-            FormSetup(supplier); // Set up the form as an MDI child
-            supplier.MdiParent = this; //display the child window
-            supplier.WindowState = FormWindowState.Maximized; //maximize the child window
-            supplier.Show();
-            panel1.Visible = false;
+            ShowChildForm(new Supplier(this));
         }
 
         private void createOrderRequestToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            CreateOrderRequest createOrderRequest = new CreateOrderRequest(this);
-            FormSetup(createOrderRequest); // Set up the form as an MDI child
-            createOrderRequest.MdiParent = this; //display the child window
-            createOrderRequest.WindowState = FormWindowState.Maximized; //maximize the child window
-            createOrderRequest.Show();
-            panel1.Visible = false;
+            ShowChildForm(new CreateOrderRequest(this));
         }
 
         private void paymentToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            Payment payment = new Payment(this);
-            FormSetup(payment); // Set up the form as an MDI child
-            payment.MdiParent = this; //display the child window
-            payment.WindowState = FormWindowState.Maximized; //maximize the child window
-            payment.Show();
-            panel1.Visible = false;
+            ShowChildForm(new Payment(this));
         }
 
-        public void FormSetup(Form myForm)
-        { 
-            //if a childform exists, close it
+        private void ShowChildForm(Form child)
+        {
+            // Keep a single workspace open inside the main window.
             if (this.ActiveMdiChild != null)
-            { 
+            {
                 this.ActiveMdiChild.Close();
             }
             menuStrip1.Items[8].Visible = false;
+            child.MdiParent = this;
+            child.WindowState = FormWindowState.Maximized;
+            child.Show();
+            panel1.Visible = false;
         }
 
         private void logOutToolStripMenuItem_Click(object sender, EventArgs e)
@@ -345,12 +307,12 @@ namespace DnD_Trading
             label2.Visible = true;
             pbShowPassword.Visible = true;
             label3.Visible = false;
-            globalvar.userName = string.Empty; // Clear the global variable
+            globalvar.userName = string.Empty;      // Clear the global variable
             globalvar.userFirstName = string.Empty; // Clear the global variable
-            globalvar.userSurname = string.Empty; // Clear the global variable
-            globalvar.clientID = 0; // Reset client ID
-            globalvar.orderID = 0; // Reset order ID
-            globalvar.paymentID = 0; // Reset payment ID
+            globalvar.userSurname = string.Empty;   // Clear the global variable
+            globalvar.clientID = 0;                 // Reset client ID
+            globalvar.orderID = 0;                  // Reset order ID
+            globalvar.paymentID = 0;                // Reset payment ID
             lblLogin.Visible = true;
             lblLogin.Text = "Login";
             label4.Text = "Verification Question:";
@@ -360,31 +322,22 @@ namespace DnD_Trading
             txtPassword.Clear();
             txtReEnterPassword.Clear();
             textBox1.Clear();
-            globalvar.priceTotal = 0; // Reset price total
-            globalvar.productID = 0; // Reset product ID
+            globalvar.priceTotal = 0;  // Reset price total
+            globalvar.productID = 0;   // Reset product ID
             globalvar.loggedInAs = -1; // Reset logged in status
 
-            MessageBox.Show("You have been logged out successfully.", "Logout", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("You have been logged out successfully.", "Logout", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
         }
 
         private void addUsersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            AddUser addUser = new AddUser(this);
-            FormSetup(addUser); // Set up the form as an MDI child
-            addUser.MdiParent = this; //display the child window
-            addUser.WindowState = FormWindowState.Maximized; //maximize the child window
-            addUser.Show();
-            panel1.Visible = false;
+            ShowChildForm(new AddUser(this));
         }
 
         private void searchForUsersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            User User = new User(this);
-            FormSetup(User); // Set up the form as an MDI child
-            User.MdiParent = this; //display the child window
-            User.WindowState = FormWindowState.Maximized; //maximize the child window
-            User.Show();
-            panel1.Visible = false;
+            ShowChildForm(new User(this));
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -399,20 +352,6 @@ namespace DnD_Trading
 
         private void txtUsername_TextChanged(object sender, EventArgs e)
         {
-            /*
-            try
-            {
-                // Fill the DataGridView with users matching the entered username
-                userTableAdapter.FillByUsername(wstGrp22DataSet.User, txtUsername.Text.Trim());
-                label4.Text = dataGridView1.Rows[0].Cells[6].Value.ToString();
-                label4.Text = wstGrp22DataSet.User.Rows[0]["UserQuestion"].ToString();
-            }
-            catch (Exception ex)
-            {
-                // Handle the case where there are no rows or the cell is empty
-                label4.Text = "Verification Question:";
-            }
-            */
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -422,7 +361,7 @@ namespace DnD_Trading
             {
                 // Fill the DataGridView with users matching the entered username
                 userTableAdapter.FillByUsername(wstGrp22DataSet.User, txtUsername.Text.Trim());
-                //label4.Text = dataGridView1.Rows[0].Cells[6].Value.ToString();
+                // label4.Text = dataGridView1.Rows[0].Cells[6].Value.ToString();
                 label4.Text = wstGrp22DataSet.User.Rows[0]["UserQuestion"].ToString();
             }
             catch (Exception ex)

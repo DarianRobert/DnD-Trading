@@ -1,4 +1,4 @@
-﻿using DnD_Trading.WstGrp22DataSetTableAdapters;
+using DnD_Trading.WstGrp22DataSetTableAdapters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -11,7 +11,7 @@ using System.Windows.Forms;
 
 namespace DnD_Trading
 {
-    public partial class User: Form
+    public partial class User : Form
     {
         private Parent mainForm;
 
@@ -23,29 +23,23 @@ namespace DnD_Trading
 
         private void User_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.User' table. You can move, or remove it, as needed.
             this.userTableAdapter.Fill(this.wstGrp22DataSet.User);
-
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if (dataGridView1.Rows.Count > 0)
-            {
-                if (e.ColumnIndex == 5)
-                {
-                    int index = dataGridView1.CurrentRow.Index;
+            if (e.RowIndex < 0 || e.ColumnIndex != 5 || dataGridView1.Rows[e.RowIndex].IsNewRow)
+                return;
 
-                    string username = Convert.ToString(wstGrp22DataSet.User.Rows[index]["UserName"]);
+            DataGridViewRow gridRow = dataGridView1.Rows[e.RowIndex];
+            DataRowView record = gridRow.DataBoundItem as DataRowView;
+            if (record == null)
+                return;
 
-                    bool isOptOut = !((bool)dataGridView1.CurrentRow.Cells[5].Value);
-
-                    userTableAdapter.UpdateStatus(
-                        isOptOut,
-                        username
-                    );
-                }
-            }
+            dataGridView1.CommitEdit(DataGridViewDataErrorContexts.Commit);
+            string username = Convert.ToString(record["UserName"]);
+            bool isOptOut = Convert.ToBoolean(gridRow.Cells[5].Value);
+            userTableAdapter.UpdateStatus(isOptOut, username);
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -58,10 +52,7 @@ namespace DnD_Trading
                 return;
             }
 
-            userTableAdapter.FillByFirstName(
-                wstGrp22DataSet.User,
-                textBox1.Text.Trim()
-            );
+            userTableAdapter.FillByFirstName(wstGrp22DataSet.User, textBox1.Text.Trim());
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -81,10 +72,7 @@ namespace DnD_Trading
                 return;
             }
 
-            userTableAdapter.FillByLastName(
-                wstGrp22DataSet.User,
-                textBox2.Text.Trim()
-            );
+            userTableAdapter.FillByLastName(wstGrp22DataSet.User, textBox2.Text.Trim());
         }
     }
 }

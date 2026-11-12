@@ -73,3 +73,15 @@ This is Darian Robert's portfolio fork of the [original team repository](https:/
 - [DnD Trading website](https://github.com/DarianRobert/DnD-Trading-Website)
 - [My project portfolio](https://darianrobert.github.io/)
 
+
+## Local configuration
+
+Copy `ConnectionStrings.example.config` to `ConnectionStrings.config` before running the application. The private file is ignored by Git. Set the named connection string to your own test database; the example uses Windows authentication against LocalDB. The database schema and original report dependencies are still required. For desktop builds, the private file is copied beside the executable. For IIS, keep it beside `Web.config`.
+
+The credentials previously committed to the team project must be rotated by the service owner. Removing them from current source does not remove them from Git history.
+
+Source changes need a Windows build and a local database check before merging. Check navigation, sorting/filtering the user grid, opt-out changes and updates with no selected row.
+
+Authored C# files use the style in `.clang-format`. Generated form layout and report code retain their original formatting.
+
+Order notifications also use `DND_SMTP_USERNAME` and `DND_SMTP_PASSWORD` from the process environment through a shared `EmailConfiguration` helper. Restart the application after setting them. Use a test mailbox when verifying email.

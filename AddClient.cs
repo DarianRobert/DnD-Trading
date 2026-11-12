@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -11,13 +11,14 @@ using System.Net.Mail;
 
 namespace DnD_Trading
 {
-    public partial class AddClient: Form
+    public partial class AddClient : Form
     {
         private Parent mainForm;
+
         public AddClient(Parent p)
         {
             InitializeComponent();
-            mainForm=p;
+            mainForm = p;
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -35,33 +36,36 @@ namespace DnD_Trading
                 // Validate required fields
                 if (string.IsNullOrEmpty(firstName) || string.IsNullOrEmpty(surname))
                 {
-                    MessageBox.Show("First Name and Surname are required.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("First Name and Surname are required.", "Input Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
                     return;
                 }
 
                 // Validate phone number: only digits
                 if (!IsValidPhoneNumber(phoneNumber))
                 {
-                    MessageBox.Show("Phone number must be 10 digits.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Phone number must be 10 digits.", "Input Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
                     return;
                 }
 
                 // Validate email using System.Net.Mail.MailAddress
                 if (!IsValidEmail(email))
                 {
-                    MessageBox.Show("Invalid email address.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Invalid email address.", "Input Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
                     return;
                 }
 
                 // Proceed with adding the client
-                clientTableAdapter.Insert(
-                    firstName + " " + surname, //ClientName
-                    phoneNumber, //ClientPhoneNumber
-                    email, //ClientEmail
-                    false // ClientOptOut
+                clientTableAdapter.Insert(firstName + " " + surname, // ClientName
+                                          phoneNumber,               // ClientPhoneNumber
+                                          email,                     // ClientEmail
+                                          false                      // ClientOptOut
                 );
 
-                MessageBox.Show("Client added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Client added successfully!", "Success", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
 
                 // Clear input fields after successful addition
                 txtFirstName.Clear();
@@ -71,7 +75,6 @@ namespace DnD_Trading
             }
 
             this.clientTableAdapter.Fill(this.wstGrp22DataSet.Client);
-
         }
 
         bool IsValidPhoneNumber(string number)
@@ -87,14 +90,17 @@ namespace DnD_Trading
 
             return true;
         }
+
         bool IsValidEmail(string email)
         {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
             try
             {
                 var addr = new MailAddress(email);
                 return addr.Address == email;
             }
-            catch
+            catch (FormatException)
             {
                 return false;
             }
@@ -102,7 +108,6 @@ namespace DnD_Trading
 
         private void AddClient_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Client' table. You can move, or remove it, as needed.
             this.clientTableAdapter.Fill(this.wstGrp22DataSet.Client);
         }
 

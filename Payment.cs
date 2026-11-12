@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -12,23 +12,20 @@ using DnD_Trading.WstGrp22DataSetTableAdapters;
 
 namespace DnD_Trading
 {
-    public partial class Payment: Form
+    public partial class Payment : Form
     {
         private Parent mainForm;
 
         public Payment(Parent p)
         {
-            mainForm=p;
+            mainForm = p;
             InitializeComponent();
         }
 
         private void Payment_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.PaymentForm' table. You can move, or remove it, as needed.
             this.paymentFormTableAdapter.Fill(this.wstGrp22DataSet.PaymentForm);
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Payment' table. You can move, or remove it, as needed.
             this.paymentTableAdapter.Fill(this.wstGrp22DataSet.Payment);
-
         }
 
         private void pictureBox1_Click(object sender, EventArgs e)
@@ -58,73 +55,77 @@ namespace DnD_Trading
 
         private void button2_Click(object sender, EventArgs e)
         {
-            try {
+            try
+            {
                 // Validate that the payment amount is a positive number
                 if (Convert.ToDecimal(textBox1.Text.Trim()) <= 0)
                 {
-                    MessageBox.Show("Payment amount must be a positive number.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show("Payment amount must be a positive number.", "Input Error", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
                     return;
                 }
             }
             catch (FormatException)
             {
-                MessageBox.Show("Please enter a valid payment amount.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please enter a valid payment amount.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
-            DialogResult result = MessageBox.Show("Update payment status?", "Update Payment", MessageBoxButtons.OKCancel);
+            DialogResult result =
+                MessageBox.Show("Update payment status?", "Update Payment", MessageBoxButtons.OKCancel);
             if (result != DialogResult.OK)
             {
-                MessageBox.Show("Payment update cancelled.", "Cancelled", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Payment update cancelled.", "Cancelled", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
                 return;
             }
 
             // Validate that a row is selected
             if (dataGridView1.CurrentRow == null)
             {
-                MessageBox.Show("Please select a payment to update.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a payment to update.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
             if (globalvar.paymentID == 0)
             {
-                MessageBox.Show("Please select a payment to update.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Please select a payment to update.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
             // Validate that the status is not already true
             if (Convert.ToBoolean(dataGridView1.CurrentRow.Cells[6].Value))
             {
-                MessageBox.Show("This payment is already marked as paid.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("This payment is already marked as paid.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
             if (Convert.ToDecimal(textBox1.Text.Trim()) >= Convert.ToDecimal(dataGridView1.CurrentRow.Cells[4].Value))
             {
-                decimal surplus = Convert.ToDecimal(textBox1.Text.Trim()) - Convert.ToDecimal(dataGridView1.CurrentRow.Cells[4].Value);
-                
-                paymentTableAdapter.UpdatePayment(
-                true,
-                0,
-                surplus,
-                globalvar.paymentID
-                );
+                decimal surplus = Convert.ToDecimal(textBox1.Text.Trim()) -
+                                  Convert.ToDecimal(dataGridView1.CurrentRow.Cells[4].Value);
 
-                MessageBox.Show("Payment status updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                paymentTableAdapter.UpdatePayment(true, 0, surplus, globalvar.paymentID);
+
+                MessageBox.Show("Payment status updated successfully!", "Success", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
             }
             else
             {
                 // Update the payment status
-                paymentTableAdapter.UpdatePayment(
-                false,
-                Convert.ToDecimal(dataGridView1.CurrentRow.Cells[4].Value) - Convert.ToDecimal(textBox1.Text.Trim()),
-                0,
-                globalvar.paymentID
-                );
+                paymentTableAdapter.UpdatePayment(false,
+                                                  Convert.ToDecimal(dataGridView1.CurrentRow.Cells[4].Value) -
+                                                      Convert.ToDecimal(textBox1.Text.Trim()),
+                                                  0, globalvar.paymentID);
 
-                MessageBox.Show("Payment status updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Payment status updated successfully!", "Success", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
             }
-              
+
             paymentFormTableAdapter.Fill(this.wstGrp22DataSet.PaymentForm);
 
             textBox1.Clear();
@@ -137,7 +138,8 @@ namespace DnD_Trading
         {
             globalvar.paymentID = Convert.ToInt32(dataGridView1.CurrentRow.Cells[2].Value);
 
-            //MessageBox.Show("Payment ID: " + globalvar.paymentID, "Payment Selected", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            // MessageBox.Show("Payment ID: " + globalvar.paymentID, "Payment Selected", MessageBoxButtons.OK,
+            // MessageBoxIcon.Information);
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -166,24 +168,6 @@ namespace DnD_Trading
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            /*
-            if (dataGridView1.Rows.Count > 0)
-            {
-                if (e.ColumnIndex == 5)
-                {
-                    int index = dataGridView1.CurrentRow.Index;
-
-                    int paymentID = Convert.ToInt32(wstGrp22DataSet.Payment.Rows[index]["PaymentID"]);
-
-                    bool isOptOut = !((bool)dataGridView1.CurrentRow.Cells[5].Value);
-
-                    
-                    paymentTableAdapter.UpdateStatus(
-                        isOptOut,
-                        
-                    );
-                }
-            }*/
         }
     }
 }

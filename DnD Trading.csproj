@@ -55,6 +55,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EmailConfiguration.cs" />
     <Compile Include="AddClient.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -236,6 +237,11 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
+    <None Include="ConnectionStrings.example.config" />
+    <None Include="ConnectionStrings.config" Condition="Exists('ConnectionStrings.config')">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\back.png" />

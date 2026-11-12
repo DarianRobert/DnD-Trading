@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -10,19 +10,21 @@ using System.Windows.Forms;
 
 namespace DnD_Trading
 {
-    public partial class Product: Form
+    public partial class Product : Form
     {
         public TabControl TabControl1 { get; set; }
         public ComboBox ComboBox1 { get; set; }
 
         private Parent mainForm;
+
         public Product(Parent p)
         {
             InitializeComponent();
-            mainForm= p;
+            mainForm = p;
         }
 
         private Supplier supplierForm;
+
         public Product(Supplier p)
         {
             InitializeComponent();
@@ -31,6 +33,7 @@ namespace DnD_Trading
 
         private CreateOrder createOrderForm;
         private bool isCreateOrderForm = false;
+
         public Product(CreateOrder p)
         {
             InitializeComponent();
@@ -40,26 +43,20 @@ namespace DnD_Trading
 
         private void button1_Click(object sender, EventArgs e)
         {
-
         }
 
         private void Product_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.SearchAddProduct' table. You can move, or remove it, as needed.
             this.searchAddProductTableAdapter.Fill(this.wstGrp22DataSet.SearchAddProduct);
 
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.SupplierProduct' table. You can move, or remove it, as needed.
             this.supplierProductTableAdapter.Fill(this.wstGrp22DataSet.SupplierProduct);
 
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Supplier' table. You can move, or remove it, as needed.
             this.supplierTableAdapter.Fill(this.wstGrp22DataSet.Supplier);
 
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Product' table. You can move, or remove it, as needed.
             this.productTableAdapter.Fill(this.wstGrp22DataSet.Product);
 
             TabControl1 = this.tabControl1;
             ComboBox1 = this.comboBox1;
-
 
             comboBox1.SelectedIndex = -1;
             cmbSupplier.SelectedIndex = -1;
@@ -72,7 +69,6 @@ namespace DnD_Trading
             {
                 this.groupBox3.Visible = true;
             }
-
         }
 
         private void txtProduct_TextChanged(object sender, EventArgs e)
@@ -86,7 +82,8 @@ namespace DnD_Trading
                 return;
             }
 
-            searchAddProductTableAdapter.FillByProductLIKE(this.wstGrp22DataSet.SearchAddProduct, txtProduct.Text.Trim());
+            searchAddProductTableAdapter.FillByProductLIKE(this.wstGrp22DataSet.SearchAddProduct,
+                                                           txtProduct.Text.Trim());
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
@@ -94,12 +91,14 @@ namespace DnD_Trading
             if (decimal.TryParse(txtSurcharge.Text, out decimal surcharge))
             {
                 productTableAdapter.UpdateQuery(surcharge, globalvar.productID);
-                MessageBox.Show("Surcharge updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Surcharge updated successfully!", "Success", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
                 txtSurcharge.Clear();
             }
             else
             {
-                MessageBox.Show("Please enter a valid decimal value for the surcharge.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Please enter a valid decimal value for the surcharge.", "Invalid Input",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             productTableAdapter.Fill(this.wstGrp22DataSet.Product);
         }
@@ -127,7 +126,9 @@ namespace DnD_Trading
 
         private void dataGridView1_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            globalvar.productID = (int)dataGridView1.CurrentRow.Cells[0].Value;
+            if (e.RowIndex < 0 || dataGridView1.Rows[e.RowIndex].IsNewRow)
+                return;
+            globalvar.productID = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells[0].Value);
         }
 
         private void button1_Click_1(object sender, EventArgs e)
@@ -140,21 +141,20 @@ namespace DnD_Trading
             decimal surcharge;
             decimal price;
 
-            
-
-            
-
             if (string.IsNullOrEmpty(productName) || string.IsNullOrEmpty(supplierName))
             {
-                MessageBox.Show("Product name and supplier name cannot be empty.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Product name and supplier name cannot be empty.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
-            searchAddProductTableAdapter.FillByProductAndSupplier(this.wstGrp22DataSet.SearchAddProduct, productName, supplierName);
+            searchAddProductTableAdapter.FillByProductAndSupplier(this.wstGrp22DataSet.SearchAddProduct, productName,
+                                                                  supplierName);
 
             if (wstGrp22DataSet.SearchAddProduct.Rows.Count > 0)
             {
-                MessageBox.Show("This product already exists in the database.", "Duplicate Product", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("This product already exists in the database.", "Duplicate Product",
+                                MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -164,13 +164,16 @@ namespace DnD_Trading
             {
                 if (!string.IsNullOrWhiteSpace(textBox4.Text.Trim()))
                 {
-                    MessageBox.Show("This product already exists in the database. Do not enter a value in the surcharge field.", "Duplicate Product", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    MessageBox.Show(
+                        "This product already exists in the database. Do not enter a value in the surcharge field.",
+                        "Duplicate Product", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     return;
                 }
 
                 if (!decimal.TryParse(textBox3.Text.Trim(), out price))
                 {
-                    MessageBox.Show("Please enter a valid decimal value for the price.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please enter a valid decimal value for the price.", "Invalid Input",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -181,23 +184,23 @@ namespace DnD_Trading
                 // Get the supplier ID based on the supplier name
                 int supplierID = Convert.ToInt32(wstGrp22DataSet.Supplier.Rows[0]["SupplierID"]);
 
-                supplierProductTableAdapter.Insert(
-                    productID, //find matching product ID
-                    supplierID, //find matching supplier ID
-                    price
-                );
+                supplierProductTableAdapter.Insert(productID,  // find matching product ID
+                                                   supplierID, // find matching supplier ID
+                                                   price);
             }
             else
             {
                 if (!decimal.TryParse(textBox4.Text.Trim(), out surcharge))
                 {
-                    MessageBox.Show("Please enter a valid decimal value for the surcharge.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please enter a valid decimal value for the surcharge.", "Invalid Input",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
                 if (!decimal.TryParse(textBox3.Text.Trim(), out price))
                 {
-                    MessageBox.Show("Please enter a valid decimal value for the price.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("Please enter a valid decimal value for the price.", "Invalid Input",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return;
                 }
 
@@ -208,17 +211,15 @@ namespace DnD_Trading
                 supplierTableAdapter.FillBySupplierName(this.wstGrp22DataSet.Supplier, supplierName);
                 // Get the supplier ID based on the supplier name
                 int supplierID = Convert.ToInt32(wstGrp22DataSet.Supplier.Rows[0]["SupplierID"]);
-                
-                supplierProductTableAdapter.Insert(
-                    lastInsertedProductID, //get last inserted product ID
-                    supplierID, //find matching supplier ID
-                    price
-                );
-            }    
+
+                supplierProductTableAdapter.Insert(lastInsertedProductID, // get last inserted product ID
+                                                   supplierID,            // find matching supplier ID
+                                                   price);
+            }
 
             MessageBox.Show("Product added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-            // Optionally, you can clear the input fields after adding  
+            // Optionally, you can clear the input fields after adding
             textBox1.Clear();
             comboBox1.SelectedIndex = -1;
             textBox3.Clear();
@@ -301,6 +302,12 @@ namespace DnD_Trading
         {
             cmbSupplier.DataSource = null;
             cmbSupplier.DisplayMember = "";
+            if (dataGridView2.CurrentRow == null || dataGridView2.CurrentRow.IsNewRow)
+            {
+                MessageBox.Show("Please select a supplier product to update.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
+                return;
+            }
             string productName = dataGridView2.CurrentRow.Cells[0].Value.ToString();
             string supplierName = dataGridView2.CurrentRow.Cells[1].Value.ToString();
 
@@ -315,14 +322,16 @@ namespace DnD_Trading
             if (decimal.TryParse(textBox5.Text.Trim(), out decimal price))
             {
                 supplierProductTableAdapter.UpdatePrice(price, productID, supplierID);
-                MessageBox.Show("Price updated successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Price updated successfully!", "Success", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
                 textBox5.Clear();
             }
             else
             {
-                MessageBox.Show("Invalid price value. Please enter a valid decimal value.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Invalid price value. Please enter a valid decimal value.", "Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
             searchAddProductTableAdapter.Fill(wstGrp22DataSet.SearchAddProduct);
             supplierTableAdapter.Fill(this.wstGrp22DataSet.Supplier);
             productTableAdapter.Fill(this.wstGrp22DataSet.Product);
@@ -353,12 +362,13 @@ namespace DnD_Trading
 
         private void dataGridView2_RowHeaderMouseDoubleClick(object sender, DataGridViewCellMouseEventArgs e)
         {
-            textBox1.Text = dataGridView2.CurrentRow.Cells[0].Value.ToString();
+            if (e.RowIndex < 0 || dataGridView2.Rows[e.RowIndex].IsNewRow)
+                return;
+            textBox1.Text = Convert.ToString(dataGridView2.Rows[e.RowIndex].Cells[0].Value);
         }
 
         private void lblProduct_Click(object sender, EventArgs e)
         {
-
         }
     }
 }

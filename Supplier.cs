@@ -1,4 +1,4 @@
-﻿using DnD_Trading.WstGrp22DataSetTableAdapters;
+using DnD_Trading.WstGrp22DataSetTableAdapters;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace DnD_Trading
 {
-    public partial class Supplier: Form
+    public partial class Supplier : Form
     {
         private Parent mainForm;
 
@@ -20,10 +20,11 @@ namespace DnD_Trading
 
         private bool isMainForm = false;
         private bool isProductForm = false;
+
         public Supplier(Parent p)
         {
             InitializeComponent();
-            mainForm=p;
+            mainForm = p;
             isMainForm = true;
         }
 
@@ -36,7 +37,6 @@ namespace DnD_Trading
 
         private void Supplier_Load(object sender, EventArgs e)
         {
-            // TODO: This line of code loads data into the 'wstGrp22DataSet.Supplier' table. You can move, or remove it, as needed.
             this.supplierTableAdapter.Fill(this.wstGrp22DataSet.Supplier);
         }
 
@@ -54,14 +54,16 @@ namespace DnD_Trading
             // Validate Supplier Name
             if (string.IsNullOrEmpty(supplierName))
             {
-                MessageBox.Show("Supplier name is required.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Supplier name is required.", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
             // Validate Phone Number, only digits
             if (!IsValidPhoneNumber(phoneNumber))
             {
-                MessageBox.Show("Phone number must be 10 digits", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show("Phone number must be 10 digits", "Input Error", MessageBoxButtons.OK,
+                                MessageBoxIcon.Warning);
                 return;
             }
 
@@ -73,14 +75,14 @@ namespace DnD_Trading
             }
 
             // Insert the supplier data
-            supplierTableAdapter.Insert(
-                supplierName,      // SupplierName
-                phoneNumber,       // SupplierPhoneNumber
-                email,             // SupplierEmail
-                false              // SupplierOptOut
+            supplierTableAdapter.Insert(supplierName, // SupplierName
+                                        phoneNumber,  // SupplierPhoneNumber
+                                        email,        // SupplierEmail
+                                        false         // SupplierOptOut
             );
 
-            MessageBox.Show("Supplier added successfully!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Supplier added successfully!", "Success", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
 
             this.supplierTableAdapter.Fill(this.wstGrp22DataSet.Supplier);
 
@@ -145,7 +147,6 @@ namespace DnD_Trading
                 this.Hide();
                 productForm.WindowState = FormWindowState.Maximized;
             }
-                
         }
 
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

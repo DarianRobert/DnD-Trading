@@ -17,3 +17,7 @@ x86/
 !.env.example
 .DS_Store
 Thumbs.db
+
+
+# Private local database configuration
+ConnectionStrings.config
